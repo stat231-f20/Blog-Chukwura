@@ -15,6 +15,13 @@ library(tidyverse)
 
 # Header 1
 
+Adding example audio using html code.  You can see further explanation, including what internet browsers support what types of audio files [here](https://www.w3schools.com/html/html5_audio.asp).
+
+<audio controls>
+  <source src="audio/Freedom.mp3" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+
 ## Header 2
 
 ### Header 3
