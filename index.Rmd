@@ -1,48 +1,122 @@
 ---
 title: "Global Music Trends"
 author: "Christopher Chukwura"
-date: "11/16/20"
+date: "11/17/2020"
 output:
   rmdformats::readthedown:
     thumbnails: false
     highlight: NULL
+    runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 library(tidyverse)
+library(kableExtra)
+library(ggplot2)
 ```
 
-# Header 1
+## Goal 
 
-Adding example audio using html code.  You can see further explanation, including what internet browsers support what types of audio files [here](https://www.w3schools.com/html/html5_audio.asp).
+Exploration of musical trends by year to year, differing by countries through employing statistical analysis of variables like genre, beats per minutes, length of songs, etc in order to generate conclusions on how music as a whole has transgressed and its potential trajectory going forth. 
 
-<audio controls>
-  <source src="audio/Freedom.mp3" type="audio/mpeg">
-Your browser does not support the audio element.
-</audio>
+## Datasets
 
-## Header 2
+Utilizing two datasets from Kaggle. Firstly - *top10s.csv* which includes the top songs from the 2010-2019 in the world by Spotify and Billboards. 13 variables are explored and original intent was to make inferences based upon genre, mean of minutes per songs, and yearly trends. Second - *top50contry.csv* which includes the top 50 Spotify songs by each country from 1942-2019. 13 variables are explored as well, and original intent was the same as the prior dataset.
 
-### Header 3
+**Link to datasets**: 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For example, you can include **Bold** and _Italic_ and `Code` text.  For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+[Top10s.csv](https://www.kaggle.com/leonardopena/top-spotify-songs-from-20102019-by-year) 
 
-You should test out updating your GitHub Pages website:
+[Top50contry.csv](https://www.kaggle.com/leonardopena/top-50-spotify-songs-by-each-country)
 
-- clone your group's blog project repo in RStudio
-- update "Your Project Title Here" to a new title in the YAML header
-- knit `index.Rmd` 
-- commit and push BOTH the `index.Rmd` and the `index.html` files
-- go to https://stat231-f20.github.io/Blog-Chukwura to see the published test document (this is publicly available!)
+## Motivation 
+
+Music has been apart of humanity since the beginning of our creation. It plays a important role in countless lives for various reasons - whether for personal uses like: reducing stress, improving mood to more formal uses like: work songs, military marches, etc., the uses for music are countless. Due to its importance and prevalence in daily life globally - it's important to understand the trends as humanity has progressed and be able to generate meaningful conclusions based on upon various factors that have influenced its transgression over the years. 
+
+**Hope you enjoy!**
+
+
+## Basic Overview
+
+##### Top 10 Global Genres
+
+```{r, echo=FALSE, warning=FALSE}
+top50contry <- read.csv('top50contry.csv')
+
+top_genres <- top50contry %>%
+  select(top.genre) %>%
+  group_by(top.genre) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  filter(n>19)
+
+a <- kable(top_genres, col.names = c("Top Genres", "Song Count")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", 'condensed', 'reponsive'))
+
+a
+```
+For clarity:
+
+**Pop Music** - Also known as popular music can be classified as a genre which appeals to the taste of a large segment of a given population.
+
+**Adult Standards** - Musical genre aimed at "mature" adults - those above the ages of 50 comprised of various genres.
+
+**Desi Pop/J-Pop** - Cultural specific pop music; Desi is for the country of India and J is for the country of Japan. 
+
+##### Global - Pre & Post 2000 Top Genres
+```{r, echo=FALSE, warning=FALSE}
+world_pre2000 <- top50contry %>%
+  filter(country == 'world', year <= 2000)
+
+world_post2000 <- top50contry %>%
+  filter(country == 'world', year >= 2000) 
+
+count1 <- world_pre2000 %>%
+  group_by(top.genre) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  filter(top.genre %in% c("adult standards",
+                          "album rock",
+                          "dance pop",
+                          "new wave pop",
+                          "blues rock"))
+
+count2 <- world_post2000 %>%
+  group_by(top.genre) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  filter(top.genre %in% c("dance pop",
+         "adult standards",
+         "pop",
+         "canadian pop",
+         "album rock"))
+
+ggplot(count1) +
+  geom_col(aes(x = top.genre, y = n ), colour = 'black', fill = 'red') +
+  labs(title = "Top Global Genres prior to 2000") +
+  scale_y_continuous(limits = c(0, 20)) +
+  xlab("Genres") +
+  ylab("Number of Songs") + 
+  geom_text(aes(x = top.genre, y = n, label = n), vjust = -1)
+  
+
+ggplot(count2) +
+  geom_col(aes(x = top.genre, y = n), colour = 'black', fill = 'red') +
+  labs(title = "Top Global Genres post to 2000") +
+  scale_y_continuous(limits = c(0, 20)) +
+  xlab("Genres") +
+  ylab("Number of Songs") + 
+  geom_text(aes(x = top.genre, y = n, label = n), vjust = -1)
+```
+
+This is a illustration showing the progression of musical genres globally. Although some genres withstood the test of time (adult standard & dance pop), you can see how genres begins to diversify by not only introducing new ones, but modifying others as well. 
+
+## Application
+
 
 ## Including code and plots
 
-You can embed code as normal, for example:
-
-```{r cars}
-summary(cars)
-```
 
 Let's clean up the format of that output:
 
@@ -69,30 +143,15 @@ ggplot(data = cars, aes(x = speed, y = dist)) +
        , title = "cars data (1920s)")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Music Over The Years - Videos
+
+- [Decade of Pop - Top 100 mashup](https://www.youtube.com/watch?v=UhIte8t6BEg)
+- [40 Years of Rap](https://www.youtube.com/watch?v=0AJm9XhidiM)
+- [20 Years - Top 200 songs](https://www.youtube.com/watch?v=mccohr-fkws)
 
 
-## Including links and images
+## Limitations
 
-You can include [Links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) and images ![team logo](https://raw.githubusercontent.com/stat231-f20/Blog-MoneyMovers/main/images/MoneyMovers.jpg)
+Between both datasets used, data for earlier years (prior to 1970) was sparse which limited the meaningful conclusion able to be generated between years and time periods. Additionally, some smaller countries did not have any data available and data tfor those which did was limited at times. To combat this and to strength analysis - looking for a more holistic dataset or adding on to the current datasets with increased data from earlier dates and smaller countries would help.
 
-
-# You can even create tabs if you want! {.tabset .tabset-fade .tabset-pills}
-
-## Bulleted list
-
-You can make a bulleted list like this:
-
-- item 1
-- item 2
-- item 3
-
-
-## Numbered list
-
-You can make a numbered list like this
-
-1. First thing I want to say
-2. Second thing I want to say
-3. Third thing I want to say
 
