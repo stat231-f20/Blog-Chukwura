@@ -6,32 +6,17 @@ output: html_notebook
 ```{r}
 library(dplyr)
 library(tidyverse)
-library(gapminder)
 ```
 
 
 ```{r}
 world_map <- map_data(map = "world"
                       , region = ".")
-head(world_map)
-
-ggplot(world_map, aes(x = long, y = lat, group = group)) +
-  geom_polygon(fill="lightgray", colour = "white") +
-  theme_void()  +
-  coord_fixed(ratio = 1.3) 
-
-view(gapminder)
 
 missing_world_map <- top50contry %>%
-  filter(year >= 2000) %>%
-  anti_join(world_map, by=c("country" = "region"))
-
-missing_world_map1 <- gapminder %>%
-  filter(year == 2007) %>%
   anti_join(world_map, by=c("country" = "region"))
 
 world_map_top50contry <- top50contry %>%
-  filter(year >= 2000) %>%
   mutate(country = as.character(country)
          , country = case_when(country == "argentina" ~ "Argentina"
                                , country == "australia" ~ "Australia"
@@ -54,16 +39,18 @@ world_map_top50contry <- top50contry %>%
                                , TRUE ~ country)) %>%
   right_join(world_map, by=c("country" = "region"))
 
-ggplot(world_map_top50contry, aes(x = long, y = lat, group = group
+b <- ggplot(world_map_top50contry, aes(x = long, y = lat, group = group
                       , fill = dnce)) +
   geom_polygon(color = "white") +
   theme_void() +
   coord_fixed(ratio = 1.3, ylim=c(-55,80)) +
-  labs(title = "Danceability of Songs by Country: 2000-2019"
+  labs(title = "Danceability of Songs by Country"
        , subtitle = "Source: Top50contry.csv"
        , fill = "Years") +
   theme(legend.position="bottom") +
   scale_fill_distiller(palette = "Spectral")  
+
+b
 ```
 
 
