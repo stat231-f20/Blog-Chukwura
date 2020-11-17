@@ -30,8 +30,6 @@ div_choices <- (unique(top50contry$country))
 
 ui <- fluidPage(
   
-  h1("Analysis of Global Music Trends"),
-  
   sidebarLayout(
     sidebarPanel(
       
