@@ -14,6 +14,9 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 library(tidyverse)
 library(kableExtra)
 library(ggplot2)
+library(readr)
+library(shinythemes)
+library(shiny)
 ```
 
 ## Goal 
@@ -112,36 +115,128 @@ ggplot(count2) +
 
 This is a illustration showing the progression of musical genres globally. Although some genres withstood the test of time (adult standard & dance pop), you can see how genres begins to diversify by not only introducing new ones, but modifying others as well. 
 
-## Application
+## Shiny Application
+
+##### Interactive app to generate relationships between variables
+
+```{r, echo=FALSE, warning = FALSE}
+x_choices <- as.list(names(top50contry)[c(7:15)])
+
+x_choices_names <- c("Beats Per Minute"
+                     ,"Energy"
+                     ,"Danceability"
+                     ,"Loudness - dB"
+                     ,"Liveness"
+                     ,"Valence"
+                     ,"Duration"
+                     ,"Acousticness"
+                     ,"Speechiness")
+
+names(x_choices_names) <- x_choices_names
 
 
-## Including code and plots
+y_choices<-as.list(names(top50contry)[c(16)])
 
+y_choice_names <- c( "Popularity")
 
-Let's clean up the format of that output:
+div_choices <- (unique(top50contry$country))
+
+ui <- fluidPage(
+  
+  sidebarLayout(
+    sidebarPanel(
+      
+      selectInput(inputId = "x"
+                  , label = "Choose a predictor variable of interest:"
+                  , choices = x_choices
+                  , selected = "artist"),
+      selectInput(inputId = "y"
+                  , label = "Choose a outcome variable of interest:"
+                  , choices = y_choices),
+      selectInput(inputId = "div"
+                  , label = "Include Countries:"
+                  , choices = c("All", div_choices)
+                  , selected = "All")
+      
+    ),
+    
+    mainPanel(
+      
+      tabsetPanel(type = "tabs"
+                  , tabPanel("Histogram", plotOutput(outputId = "hist"))
+                  , tabPanel("Scatterplot", plotOutput(outputId = "scatter"))
+      )
+    )
+  )
+)
+
+# server
+server <- function(input,output){
+  use_data <- reactive({
+    data<-top50contry
+    req(input$div)
+    if(input$div!="All"){
+      data<-data%>%
+        filter(country==input$div)
+    }else{
+      data<-data
+    }
+  })
+  
+  output$hist <- renderPlot({
+    ggplot(data = use_data(), aes_string(x = input$x)) +
+      geom_histogram(color = "#00215c", fill = "#00215c", alpha = 0.7) +
+      labs(x = x_choices_names[x_choices == input$x]
+           , y = "Count")
+  })
+  
+  output$scatter <- renderPlot({
+    ggplot(data = use_data(), aes_string(x = input$x, y = input$y)) +
+      geom_point() +
+      labs(x = names(x_choices)[x_choices == input$x]
+           , y = y_choices[y_choices == input$y])
+  })
+
+}
+
+# call to shinyApp
+shinyApp(ui = ui, server = server)
+```
+
+Includes two visualization - histogram and scatterplot. 
+
+Variables included: 
+
+**Beats Per Minute** (bpm) - The tempo of the song
+
+**Energy** (nrgy) - The energy of a song - the higher the value, the more energtic song
+
+**Danceability** (dnce) - The higher the value, the easier it is to dance to this song
+
+**Loudness** (dB) - The higher the value, the louder the song
+
+**Liveness** (live) - The higher the value, the more likely the song is a live recording
+
+**Valence** (val) - The higher the value, the more positive mood for the song
+
+**Duration** (dur) - The duration of the song
+
+**Acousticness** (acous) - The higher the value the more acoustic the song is
+
+**Speechiness** (spch) - The higher the value the more spoken word the song contains
+
+**Popularity** (pop) - The higher the value the more popular the song is
+
+## Interactive Map
+
+##### Interactive map highlighting countries most popular music genre between 2000-2019
+
 
 ```{r pretty, echo=FALSE, warning=FALSE, message=FALSE}
-library(kableExtra)
-summary(cars) %>%
-  kable(col.names = c("Speed", "Distance")
-        , row.names = F) %>%
-  kable_styling(bootstrap_options = "striped"
-                , full_width = F) %>%
-  row_spec(0, bold = T, underline = T) %>%
-  column_spec(1:2, width = "1.5in") 
+
 ```
 
-In a study from the 1920s, fifty cars were used to see how the speed of the car and the distance taken to stop were related.  Speeds ranged between `r min(cars$speed)` and `r max(cars$speed)` mph.  Distances taken to stop ranged between `r min(cars$dist)` and `r max(cars$dist)` feet, with the middle 50% falling between `r as.numeric(quantile(cars$dist)[2])` and `r as.numeric(quantile(cars$dist)[4])` feet.  
 
-You can also embed plots as normal, for example:
-
-```{r figure1, echo=FALSE}
-ggplot(data = cars, aes(x = speed, y = dist)) + 
-  geom_point() + 
-  labs(x = "Speed of car (mph)"
-       , y = "Distance taken to stop (ft)"
-       , title = "cars data (1920s)")
-```
 
 ## Music Over The Years - Videos
 
