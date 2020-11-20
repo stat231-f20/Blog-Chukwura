@@ -112,7 +112,7 @@ ggplot(count2) +
   geom_text(aes(x = top.genre, y = n, label = n), vjust = -1)
 ```
 
-This is a illustration showing the progression of musical genres globally. Although some genres withstood the test of time (adult standard & dance pop), you can see how genres begins to diversify by not only introducing new ones, but modifying others as well. 
+This is a illustration showing the progression of musical genres globally. Although some genres withstood the test of time (adult standard & dance pop), you can see how genres begins to diversify by not only introducing new ones, but modifying others as well. 2000 was chosen as the cut-off point because it was the peak of the CD era - which began the transition of music listening through other platforms & mediums.
 
 ## Shiny Application
 
@@ -143,6 +143,8 @@ Variables included:
 **Speechiness** (spch) - The higher the value the more spoken word the song contains
 
 **Popularity** (pop) - The higher the value the more popular the song is
+
+Variable names and descriptions were created by Spotify - recorded measurements by listeners who reported. You can look and contribute at: [Organize Your Music](http://organizeyourmusic.playlistmachinery.com)
 
 ## Map
 
@@ -186,7 +188,7 @@ b <- ggplot(world_map_top50contry, aes(x = long, y = lat, group = group
   coord_fixed(ratio = 1.3, ylim=c(-55,80)) +
   labs(title = "Danceability of Songs by Country"
        , subtitle = "Source: Top50contry.csv"
-       , fill = "DNCE Value") +
+       , fill = "dnce Value") +
   theme(legend.position="bottom") +
   scale_fill_distiller(palette = "Spectral")  
 
@@ -213,6 +215,6 @@ Chile, Argentina, and Bolivia
 
 ## Limitations
 
-Between both datasets used, data for earlier years (prior to 1970) was sparse which limited the meaningful conclusion able to be generated between years and time periods. Additionally, some smaller countries did not have any data available and data tfor those which did was limited at times. To combat this and to strength analysis - looking for a more holistic dataset or adding on to the current datasets with increased data from earlier dates and smaller countries would help.
+Between both datasets used, data for earlier years (prior to 1970) was sparse which limited the meaningful conclusion able to be generated between years and time periods. Additionally, some smaller countries did not have any data available and data for those which did was limited at times. To combat this and strengthen analysis - looking for a more holistic dataset or adding on to the current dataset(s) with increased observations from earlier dates and smaller countries would help.
 
 
