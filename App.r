@@ -80,7 +80,7 @@ server <- function(input,output){
   output$scatter <- renderPlot({
     ggplot(data = use_data(), aes_string(x = input$x, y = input$y)) +
       geom_point() +
-      labs(x = names(x_choices)[x_choices == input$x]
+      labs(x = names(x_choices_names)[x_choices == input$x]
            , y = y_choices[y_choices == input$y])
   })
 
